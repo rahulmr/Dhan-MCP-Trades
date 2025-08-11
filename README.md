@@ -2,6 +2,31 @@
 
 An AI-powered trading assistant for DhanHQ broker built with Model Context Protocol (MCP). This project enables natural language interaction with the DhanHQ trading platform, allowing you to place orders, check your portfolio, and manage your trading activities through simple conversational commands.
 
+## ✨ New Features & Improvements
+
+### 🚀 Easy Setup & Configuration
+- **One-command setup**: `python cli.py setup`
+- **Environment-based configuration** with `.env` file support
+- **Demo mode** for safe testing without real API calls
+- **Automatic configuration validation**
+
+### 🎛️ Unified Server & CLI
+- **Single unified server** combining all tools
+- **Powerful CLI** for easy management
+- **Individual tool servers** for specific needs
+- **Health checks and status monitoring**
+
+### 🔒 Enhanced Security
+- **Environment variable support**
+- **Secure credential management** 
+- **No hardcoded secrets**
+- **Demo mode for testing**
+
+### 📚 Better Documentation
+- **MCP client configuration examples**
+- **Comprehensive troubleshooting guide**
+- **Step-by-step setup instructions**
+
 ## Features
 
 ### Order Management
@@ -25,43 +50,146 @@ An AI-powered trading assistant for DhanHQ broker built with Model Context Proto
 - A DhanHQ trading account
 - DhanHQ API credentials (client ID and access token)
 
-### Installation
+### Quick Setup
 
-1. Clone this repository
-   ```
-   git clone https://github.com/yourusername/dhan-broker-mcp-trades.git
-   cd dhan-broker-mcp-trades
+1. **Clone this repository**
+   ```bash
+   git clone https://github.com/rahulmr/Dhan-MCP-Trades.git
+   cd Dhan-MCP-Trades
    ```
 
-2. Install required dependencies
-   ```
+2. **Install dependencies**
+   ```bash
    pip install -r requirements.txt
    ```
 
-3. Configure your credentials
+3. **Setup configuration (Easy Way)**
+   ```bash
+   python cli.py setup
+   ```
+   This will create a `.env` file from the template.
+
+4. **Configure your credentials**
    
-   Edit the `config.py` file with your DhanHQ credentials:
-   ```python
-   DHAN_CLIENT_ID = "your_client_id_here"
-   DHAN_ACCESS_TOKEN = "your_access_token_here"
-   DHAN_API_BASE_URL = "https://api.dhan.co/v2"
+   Edit the `.env` file with your DhanHQ credentials:
+   ```bash
+   DHAN_CLIENT_ID=your_client_id_here
+   DHAN_ACCESS_TOKEN=your_access_token_here
+   ```
+   
+   You can get your credentials from [DhanHQ API Portal](https://api.dhan.co/).
+
+5. **Test your setup**
+   ```bash
+   python cli.py status
+   python cli.py test
    ```
 
-4. Make sure your `stocks.json` file is populated with the stocks you want to trade
+6. **Start the server**
+   ```bash
+   python cli.py start
+   ```
+
+### Alternative Setup Methods
+
+#### Method 1: Unified MCP Server (Recommended)
+```bash
+# Start the unified server with all tools
+python mcp_server.py
+```
+
+#### Method 2: Individual Tools
+```bash
+# Start specific tools using the CLI
+python cli.py tool order        # Order placement only
+python cli.py tool portfolio    # Portfolio management only
+python cli.py tool fund         # Fund balance only
+```
+
+#### Method 3: MCP CLI Integration
+```bash
+# Use with MCP CLI
+python -m mcp.server.cli dev mcp_server.py
+```
+
+### Demo Mode
+
+For testing without real trading:
+```bash
+# Set in .env file
+DEMO_MODE=true
+
+# Or start with demo mode
+DEMO_MODE=true python cli.py start
+```
+
+### Configuration Options
+
+All configuration is handled through environment variables or the `.env` file:
+
+| Variable | Required | Description | Default |
+|----------|----------|-------------|---------|
+| `DHAN_CLIENT_ID` | Yes | Your DhanHQ Client ID | - |
+| `DHAN_ACCESS_TOKEN` | Yes | Your DhanHQ Access Token | - |
+| `DHAN_API_BASE_URL` | No | DhanHQ API Base URL | `https://api.dhan.co/v2` |
+| `DEMO_MODE` | No | Enable demo mode | `false` |
+| `LOG_LEVEL` | No | Logging level | `INFO` |
+
+## Using with MCP Clients
+
+### Claude Desktop
+
+Add this to your Claude Desktop configuration:
+
+```json
+{
+  "mcpServers": {
+    "dhan-trading": {
+      "command": "python",
+      "args": ["/path/to/Dhan-MCP-Trades/mcp_server.py"]
+    }
+  }
+}
+```
+
+For detailed MCP client configuration, see [MCP_CLIENT_CONFIG.md](MCP_CLIENT_CONFIG.md).
+
+## CLI Commands
+
+The repository includes a powerful CLI for easy management:
+
+```bash
+python cli.py setup           # Setup configuration
+python cli.py status          # Check configuration status
+python cli.py start           # Start unified server
+python cli.py test            # Test API connection
+python cli.py tool <name>     # Start individual tool
+python cli.py mcp <args>      # Run with MCP CLI
+```
 
 ### Running the Tools
 
-Each tool can be run independently using the MCP CLI:
-
+#### Unified Server (Recommended)
+```bash
+python cli.py start
 ```
-# To run the order placement tool
-python -m mcp.server.cli dev order_placement_tool.py
 
-# To run the portfolio server
-python -m mcp.server.cli dev portfolio_server.py
+#### Individual Tools
+```bash
+python cli.py tool order       # Order placement
+python cli.py tool portfolio   # Portfolio management  
+python cli.py tool fund        # Fund balance
+python cli.py tool holdings    # Holdings & positions
+python cli.py tool margin      # Margin calculator
+python cli.py tool orderbook   # Order book & trades
+python cli.py tool aftermarket # After-market orders
+python cli.py tool super       # Super orders
+```
 
-# To run other tools
-python -m mcp.server.cli dev <tool_filename>.py
+#### MCP CLI Integration
+```bash
+python cli.py mcp mcp_server.py           # Unified server
+python cli.py mcp order_placement_tool.py # Individual tool
 ```
 
 ## Using the Assistant
@@ -143,6 +271,39 @@ python -m mcp.server.cli dev <tool_filename>.py
 
 
 
+## Available Tools & Commands
+
+The unified server provides these tools through natural language commands:
+
+### 📈 Order Management
+| Tool | Description | Example Commands |
+|------|-------------|-----------------|
+| `place_stock_order` | Place market/limit orders | "Buy 10 shares of HDFC Bank" |
+| `place_after_market_stock_order` | After-market orders | "Place AMO for 100 Infosys at ₹1500" |
+| `get_order_history` | View order book | "Show my order history" |
+| `get_trade_history` | View trade history | "What trades did I make today?" |
+| `cancel_stock_order` | Cancel orders | "Cancel order ID 12345" |
+
+### 💼 Portfolio Management
+| Tool | Description | Example Commands |
+|------|-------------|-----------------|
+| `get_portfolio_holdings` | View holdings | "What are my current holdings?" |
+| `get_open_positions` | View positions | "Show my open positions" |
+| `convert_stock_position` | Convert positions | "Convert HDFC from intraday to delivery" |
+
+### 💰 Account Information
+| Tool | Description | Example Commands |
+|------|-------------|-----------------|
+| `get_account_balance` | Check fund balance | "What's my account balance?" |
+| `calculate_margin` | Calculate margins | "What margin is needed for 50 Reliance shares?" |
+
+### 🔍 Utilities
+| Tool | Description | Example Commands |
+|------|-------------|-----------------|
+| `get_available_stocks` | List all stocks | "Show all available stocks" |
+| `search_stock` | Search for stocks | "Search for Adani stocks" |
+| `get_server_status` | Server status | "What's the server status?" |
+
 ## Tool Descriptions
 
 ### order_placement_tool.py
@@ -184,6 +345,33 @@ The project uses a `stocks.json` file to map stock names to their security IDs. 
     }
   ]
 }
+```
+
+## Project Structure
+
+```
+Dhan-MCP-Trades/
+├── 📄 README.md                    # Main documentation
+├── 🔧 cli.py                       # Command-line interface
+├── 🌐 mcp_server.py                # Unified MCP server
+├── ⚙️  config.py                   # Configuration management
+├── 📋 requirements.txt             # Python dependencies
+├── 📦 pyproject.toml               # Modern Python project config
+├── 🔒 .env.example                 # Environment template
+├── 🚫 .gitignore                   # Git ignore file
+├── 🛠️  install.sh                  # Installation script
+├── 📚 MCP_CLIENT_CONFIG.md         # MCP client configuration guide
+├── 🆘 TROUBLESHOOTING.md           # Troubleshooting guide
+├── 📊 stocks.json                  # Stock database
+└── Individual tool files:
+    ├── order_placement_tool.py     # Order placement
+    ├── portfolio_server.py         # Portfolio management
+    ├── fund_balance_tool.py        # Fund balance
+    ├── holdings_positions_tool.py  # Holdings & positions
+    ├── margin_calculator_tool.py   # Margin calculator
+    ├── order_book_tool.py          # Order book & trades
+    ├── after_market_order_tool.py  # After-market orders
+    └── super-order.py              # Super orders
 ```
 
 ## Contributing
